@@ -1,0 +1,14 @@
+# =====================================================================
+#  Human-Centred Cognitive Navigation Agent -- Soar production memory
+#  Loader: sources every rule file in dependency order.
+#  Every production is explained in docs/RULES.md.
+# =====================================================================
+
+# Learn chunks in every substate EXCEPT those flagged with (dont-learn).
+# The plan-route substate opts out (see plan-route.soar for the reason).
+chunk except
+
+source cost-model.soar
+source navigate.soar
+source plan-route.soar
+source tie-break.soar

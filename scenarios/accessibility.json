@@ -1,0 +1,10 @@
+{
+  "name": "accessibility",
+  "title": "Scenario 3 - Accessibility-aware navigation",
+  "description": "Same trip (office B to room F on the lower level) for three user profiles. Run once per profile.",
+  "map": "maps/campus_floor.txt",
+  "profile": "wheelchair",
+  "start": [9, 2],
+  "goal": [10, 14],
+  "max_steps": 200
+}

@@ -1,0 +1,10 @@
+{
+  "name": "normal",
+  "title": "Scenario 1 - Normal navigation",
+  "description": "Empty building, standard walking user, office A (north-west) to room H (south-east).",
+  "map": "maps/campus_floor.txt",
+  "profile": "standard",
+  "start": [2, 2],
+  "goal": [22, 14],
+  "max_steps": 200
+}

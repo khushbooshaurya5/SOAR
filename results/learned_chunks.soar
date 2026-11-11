@@ -1,0 +1,27 @@
+# Rules written by Soar's chunking mechanism during
+# scripts/learning_experiment.py -- not by a human.
+
+sp {chunk*tie-break*apply*no-difference*t3-110-1
+    :chunk
+    (state <s1> ^name navigate ^operator <o1> + ^operator { <o2> <> <o1> } +
+          ^heading { <h1> <> <d2> <> <d1> })
+    (<o1> ^name move ^value <v1> ^to <t2> ^dir <d2>)
+    (<o2> ^name move ^value <v1> ^to <t1> ^dir <d1>)
+    (<t1> ^crowd <c1>)
+    (<t2> ^crowd <c1>)
+    -->
+    (<s1> ^operator <o1> = <o2>)
+}
+
+sp {chunk*tie-break*apply*prefer*t2-181-1
+    :chunk
+    (state <s1> ^name navigate ^operator <o1> + ^heading <d1>
+          ^operator { <o2> <> <o1> } +)
+    (<o1> ^name move ^dir <d1> ^value <v1> ^to <t2>)
+    (<o2> ^name move ^value <v1> ^to <t1> ^dir { <d2> <> <d1> })
+    (<t1> ^crowd <c1>)
+    (<t2> ^crowd <c1>)
+    -->
+    (<s1> ^operator <o1> > <o2>)
+}
+

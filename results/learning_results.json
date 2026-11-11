@@ -1,0 +1,426 @@
+{
+  "episodes": 20,
+  "seed": 7,
+  "totals": {
+    "chunking_on": {
+      "tie_impasses": 2,
+      "decisions": 3417,
+      "route_cost": 372,
+      "successes": 20,
+      "chunks_learned": 2
+    },
+    "chunking_off": {
+      "tie_impasses": 95,
+      "decisions": 3621,
+      "route_cost": 372,
+      "successes": 20,
+      "chunks_learned": 0
+    }
+  },
+  "runs": {
+    "chunking_on": [
+      {
+        "episode": "ep1",
+        "success": true,
+        "steps": 19,
+        "route_cost": 19,
+        "decisions": 198,
+        "tie_impasses": 1,
+        "chunk_firings": 4,
+        "chunks_total": 1
+      },
+      {
+        "episode": "ep2",
+        "success": true,
+        "steps": 17,
+        "route_cost": 18,
+        "decisions": 128,
+        "tie_impasses": 1,
+        "chunk_firings": 41,
+        "chunks_total": 2
+      },
+      {
+        "episode": "ep3",
+        "success": true,
+        "steps": 19,
+        "route_cost": 23,
+        "decisions": 161,
+        "tie_impasses": 0,
+        "chunk_firings": 62,
+        "chunks_total": 2
+      },
+      {
+        "episode": "ep4",
+        "success": true,
+        "steps": 26,
+        "route_cost": 28,
+        "decisions": 216,
+        "tie_impasses": 0,
+        "chunk_firings": 98,
+        "chunks_total": 2
+      },
+      {
+        "episode": "ep5",
+        "success": true,
+        "steps": 19,
+        "route_cost": 20,
+        "decisions": 193,
+        "tie_impasses": 0,
+        "chunk_firings": 45,
+        "chunks_total": 2
+      },
+      {
+        "episode": "ep6",
+        "success": true,
+        "steps": 16,
+        "route_cost": 17,
+        "decisions": 233,
+        "tie_impasses": 0,
+        "chunk_firings": 53,
+        "chunks_total": 2
+      },
+      {
+        "episode": "ep7",
+        "success": true,
+        "steps": 25,
+        "route_cost": 26,
+        "decisions": 202,
+        "tie_impasses": 0,
+        "chunk_firings": 75,
+        "chunks_total": 2
+      },
+      {
+        "episode": "ep8",
+        "success": true,
+        "steps": 13,
+        "route_cost": 23,
+        "decisions": 256,
+        "tie_impasses": 0,
+        "chunk_firings": 19,
+        "chunks_total": 2
+      },
+      {
+        "episode": "ep9",
+        "success": true,
+        "steps": 16,
+        "route_cost": 18,
+        "decisions": 181,
+        "tie_impasses": 0,
+        "chunk_firings": 52,
+        "chunks_total": 2
+      },
+      {
+        "episode": "ep10",
+        "success": true,
+        "steps": 20,
+        "route_cost": 21,
+        "decisions": 214,
+        "tie_impasses": 0,
+        "chunk_firings": 66,
+        "chunks_total": 2
+      },
+      {
+        "episode": "ep11",
+        "success": true,
+        "steps": 18,
+        "route_cost": 18,
+        "decisions": 207,
+        "tie_impasses": 0,
+        "chunk_firings": 43,
+        "chunks_total": 2
+      },
+      {
+        "episode": "ep12",
+        "success": true,
+        "steps": 10,
+        "route_cost": 10,
+        "decisions": 85,
+        "tie_impasses": 0,
+        "chunk_firings": 25,
+        "chunks_total": 2
+      },
+      {
+        "episode": "ep13",
+        "success": true,
+        "steps": 25,
+        "route_cost": 26,
+        "decisions": 212,
+        "tie_impasses": 0,
+        "chunk_firings": 66,
+        "chunks_total": 2
+      },
+      {
+        "episode": "ep14",
+        "success": true,
+        "steps": 10,
+        "route_cost": 10,
+        "decisions": 114,
+        "tie_impasses": 0,
+        "chunk_firings": 27,
+        "chunks_total": 2
+      },
+      {
+        "episode": "ep15",
+        "success": true,
+        "steps": 16,
+        "route_cost": 16,
+        "decisions": 136,
+        "tie_impasses": 0,
+        "chunk_firings": 36,
+        "chunks_total": 2
+      },
+      {
+        "episode": "ep16",
+        "success": true,
+        "steps": 15,
+        "route_cost": 16,
+        "decisions": 145,
+        "tie_impasses": 0,
+        "chunk_firings": 56,
+        "chunks_total": 2
+      },
+      {
+        "episode": "ep17",
+        "success": true,
+        "steps": 15,
+        "route_cost": 18,
+        "decisions": 134,
+        "tie_impasses": 0,
+        "chunk_firings": 38,
+        "chunks_total": 2
+      },
+      {
+        "episode": "ep18",
+        "success": true,
+        "steps": 19,
+        "route_cost": 21,
+        "decisions": 133,
+        "tie_impasses": 0,
+        "chunk_firings": 44,
+        "chunks_total": 2
+      },
+      {
+        "episode": "ep19",
+        "success": true,
+        "steps": 12,
+        "route_cost": 13,
+        "decisions": 149,
+        "tie_impasses": 0,
+        "chunk_firings": 38,
+        "chunks_total": 2
+      },
+      {
+        "episode": "ep20",
+        "success": true,
+        "steps": 10,
+        "route_cost": 11,
+        "decisions": 120,
+        "tie_impasses": 0,
+        "chunk_firings": 28,
+        "chunks_total": 2
+      }
+    ],
+    "chunking_off": [
+      {
+        "episode": "ep1",
+        "success": true,
+        "steps": 19,
+        "route_cost": 19,
+        "decisions": 200,
+        "tie_impasses": 2,
+        "chunk_firings": 0,
+        "chunks_total": 0
+      },
+      {
+        "episode": "ep2",
+        "success": true,
+        "steps": 17,
+        "route_cost": 18,
+        "decisions": 130,
+        "tie_impasses": 2,
+        "chunk_firings": 0,
+        "chunks_total": 0
+      },
+      {
+        "episode": "ep3",
+        "success": true,
+        "steps": 19,
+        "route_cost": 23,
+        "decisions": 163,
+        "tie_impasses": 1,
+        "chunk_firings": 0,
+        "chunks_total": 0
+      },
+      {
+        "episode": "ep4",
+        "success": true,
+        "steps": 26,
+        "route_cost": 28,
+        "decisions": 222,
+        "tie_impasses": 3,
+        "chunk_firings": 0,
+        "chunks_total": 0
+      },
+      {
+        "episode": "ep5",
+        "success": true,
+        "steps": 19,
+        "route_cost": 20,
+        "decisions": 195,
+        "tie_impasses": 1,
+        "chunk_firings": 0,
+        "chunks_total": 0
+      },
+      {
+        "episode": "ep6",
+        "success": true,
+        "steps": 16,
+        "route_cost": 17,
+        "decisions": 237,
+        "tie_impasses": 2,
+        "chunk_firings": 0,
+        "chunks_total": 0
+      },
+      {
+        "episode": "ep7",
+        "success": true,
+        "steps": 25,
+        "route_cost": 26,
+        "decisions": 226,
+        "tie_impasses": 12,
+        "chunk_firings": 0,
+        "chunks_total": 0
+      },
+      {
+        "episode": "ep8",
+        "success": true,
+        "steps": 13,
+        "route_cost": 23,
+        "decisions": 256,
+        "tie_impasses": 0,
+        "chunk_firings": 0,
+        "chunks_total": 0
+      },
+      {
+        "episode": "ep9",
+        "success": true,
+        "steps": 16,
+        "route_cost": 18,
+        "decisions": 185,
+        "tie_impasses": 2,
+        "chunk_firings": 0,
+        "chunks_total": 0
+      },
+      {
+        "episode": "ep10",
+        "success": true,
+        "steps": 20,
+        "route_cost": 21,
+        "decisions": 234,
+        "tie_impasses": 10,
+        "chunk_firings": 0,
+        "chunks_total": 0
+      },
+      {
+        "episode": "ep11",
+        "success": true,
+        "steps": 18,
+        "route_cost": 18,
+        "decisions": 244,
+        "tie_impasses": 17,
+        "chunk_firings": 0,
+        "chunks_total": 0
+      },
+      {
+        "episode": "ep12",
+        "success": true,
+        "steps": 10,
+        "route_cost": 10,
+        "decisions": 103,
+        "tie_impasses": 9,
+        "chunk_firings": 0,
+        "chunks_total": 0
+      },
+      {
+        "episode": "ep13",
+        "success": true,
+        "steps": 25,
+        "route_cost": 26,
+        "decisions": 221,
+        "tie_impasses": 4,
+        "chunk_firings": 0,
+        "chunks_total": 0
+      },
+      {
+        "episode": "ep14",
+        "success": true,
+        "steps": 10,
+        "route_cost": 10,
+        "decisions": 122,
+        "tie_impasses": 3,
+        "chunk_firings": 0,
+        "chunks_total": 0
+      },
+      {
+        "episode": "ep15",
+        "success": true,
+        "steps": 16,
+        "route_cost": 16,
+        "decisions": 141,
+        "tie_impasses": 4,
+        "chunk_firings": 0,
+        "chunks_total": 0
+      },
+      {
+        "episode": "ep16",
+        "success": true,
+        "steps": 15,
+        "route_cost": 16,
+        "decisions": 168,
+        "tie_impasses": 6,
+        "chunk_firings": 0,
+        "chunks_total": 0
+      },
+      {
+        "episode": "ep17",
+        "success": true,
+        "steps": 15,
+        "route_cost": 18,
+        "decisions": 138,
+        "tie_impasses": 4,
+        "chunk_firings": 0,
+        "chunks_total": 0
+      },
+      {
+        "episode": "ep18",
+        "success": true,
+        "steps": 19,
+        "route_cost": 21,
+        "decisions": 146,
+        "tie_impasses": 5,
+        "chunk_firings": 0,
+        "chunks_total": 0
+      },
+      {
+        "episode": "ep19",
+        "success": true,
+        "steps": 12,
+        "route_cost": 13,
+        "decisions": 163,
+        "tie_impasses": 4,
+        "chunk_firings": 0,
+        "chunks_total": 0
+      },
+      {
+        "episode": "ep20",
+        "success": true,
+        "steps": 10,
+        "route_cost": 11,
+        "decisions": 127,
+        "tie_impasses": 4,
+        "chunk_firings": 0,
+        "chunks_total": 0
+      }
+    ]
+  }
+}
