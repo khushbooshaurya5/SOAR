@@ -1,0 +1,189 @@
+# =====================================================================
+#  navigate.soar -- the top-level problem space.
+#
+#  Operators (highest priority first):
+#     finish              announce arrival
+#     report-unreachable  announce that no accessible route exists
+#     record-obstacle     store a newly perceived obstacle as a belief
+#     replan              discard a plan made for an outdated crowd picture
+#     plan-route          ABSTRACT: implemented in a substate (plan-route.soar)
+#     move                step to an adjacent cell (motor command)
+# =====================================================================
+
+# ---- initialisation --------------------------------------------------
+
+# The very first decision: nothing is known yet, so set up the task.
+sp {navigate*propose*init-navigate
+   (state <s> ^superstate nil -^name)
+-->
+   (<s> ^operator <o> +)
+   (<o> ^name init-navigate)}
+
+# Name the problem space, create the (initially empty) obstacle memory
+# and note that the agent has no heading yet. O-supported: persists.
+sp {navigate*apply*init-navigate
+   (state <s> ^operator.name init-navigate)
+-->
+   (<s> ^name navigate ^heading none ^memory <m>)}
+
+# ---- state elaboration -----------------------------------------------
+
+# The task is achieved when the perceived agent cell is the goal cell.
+sp {navigate*elaborate*at-goal
+   (state <s> ^name navigate ^io.input-link <il>)
+   (<il> ^agent.cell <c> ^goal.cell <c>)
+-->
+   (<s> ^at-goal true)}
+
+# ---- operator priority -----------------------------------------------
+
+# One generic selection rule orders the different KINDS of operators:
+# whenever two proposed operators carry different ^priority numbers,
+# create a "better" preference for the higher one.
+sp {navigate*compare*priority
+   (state <s> ^name navigate ^operator <o1> + ^operator <o2> +)
+   (<o1> ^priority <p1>)
+   (<o2> ^priority < <p1>)
+-->
+   (<s> ^operator <o1> > <o2>)}
+
+# ---- finish ----------------------------------------------------------
+
+sp {navigate*propose*finish
+   (state <s> ^name navigate ^at-goal true)
+-->
+   (<s> ^operator <o> +)
+   (<o> ^name finish ^priority 6)}
+
+sp {navigate*apply*finish
+   (state <s> ^operator.name finish ^io.output-link <ol>)
+-->
+   (<ol> ^arrived <cmd>)}
+
+# ---- report-unreachable ----------------------------------------------
+
+# The planner proved that no route exists that this user can travel.
+# Saying so is better than sending the user somewhere they cannot go.
+sp {navigate*propose*report-unreachable
+   (state <s> ^name navigate ^plan.status unreachable)
+-->
+   (<s> ^operator <o> +)
+   (<o> ^name report-unreachable ^priority 5)}
+
+sp {navigate*apply*report-unreachable
+   (state <s> ^operator.name report-unreachable ^io.output-link <ol>)
+-->
+   (<ol> ^stop <cmd>)
+   (<cmd> ^reason no-accessible-route)}
+
+# ---- record-obstacle (obstacle avoidance, part 1: belief) -------------
+
+# Obstacles are only perceived when adjacent. A perceived obstacle that
+# is not yet in memory must be remembered before anything else happens.
+# Several obstacles seen at once are recorded in arbitrary order (=).
+sp {navigate*propose*record-obstacle
+   (state <s> ^name navigate ^memory <m>
+              ^io.input-link.percept.obstacle <c>)
+  -(<m> ^blocked <c>)
+-->
+   (<s> ^operator <o> + =)
+   (<o> ^name record-obstacle ^cell <c> ^priority 4)}
+
+# Store the belief. It is o-supported, so it survives after the agent
+# walks away and the percept disappears from the input-link.
+sp {navigate*apply*record-obstacle
+   (state <s> ^operator <o> ^memory <m>)
+   (<o> ^name record-obstacle ^cell <c>)
+-->
+   (<m> ^blocked <c>)}
+
+# The current plan was made without this knowledge: throw it away.
+# (Removing the single ^plan WME garbage-collects all its labels.)
+sp {navigate*apply*record-obstacle*invalidate-plan
+   (state <s> ^operator.name record-obstacle ^plan <p>)
+-->
+   (<s> ^plan <p> -)}
+
+# ---- replan (crowd changes) ------------------------------------------
+
+# The building's occupancy feed stamps every change with ^crowd-epoch.
+# A finished plan built in an older epoch is based on stale costs.
+sp {navigate*propose*replan
+   (state <s> ^name navigate ^plan <p> ^io.input-link.crowd-epoch <e>)
+   (<p> ^status complete ^epoch <> <e>)
+-->
+   (<s> ^operator <o> +)
+   (<o> ^name replan ^priority 3)}
+
+sp {navigate*apply*replan
+   (state <s> ^operator.name replan ^plan <p>)
+-->
+   (<s> ^plan <p> -)}
+
+# ---- plan-route (abstract operator -> subgoal) ------------------------
+
+# Needed whenever there is no finished plan. No rule in this problem
+# space applies it, so Soar reaches an OPERATOR NO-CHANGE impasse and
+# creates a substate; plan-route.soar does the work there.
+sp {navigate*propose*plan-route
+   (state <s> ^name navigate -^at-goal)
+  -{(<s> ^plan <p>)
+    (<p> ^status << complete unreachable >>)}
+-->
+   (<s> ^operator <o> +)
+   (<o> ^name plan-route ^priority 2)}
+
+# ---- move (route selection + obstacle avoidance, part 2) ---------------
+
+# Propose stepping to every adjacent cell that
+#   * the finished plan has labelled with a cost-to-goal (^dist), and
+#   * is currently enterable (has an ^enter-cost: walls are not in the
+#     map, and impassable/blocked cells have no enter-cost).
+# ^value is what the step would cost in total: enter the cell, then
+# follow the best route from there.
+sp {navigate*propose*move
+   (state <s> ^name navigate -^at-goal ^plan <p>
+              ^io.input-link.agent.cell <here>)
+   (<p> ^status complete ^label <l>)
+   (<here> ^neighbor <nb>)
+   (<nb> ^dir <d> ^cell <n>)
+   (<l> ^cell <n> ^dist <dist>)
+   (<n> ^model.enter-cost <ec>)
+-->
+   (<s> ^operator <o> +)
+   (<o> ^name move ^dir <d> ^to <n> ^value (+ <dist> <ec>) ^priority 1)}
+
+# Route selection: a cheaper total route is better.
+# Equal values create NO preference -> tie impasse -> tie-break.soar.
+sp {navigate*compare*move*cheaper-route
+   (state <s> ^name navigate ^operator <o1> + ^operator <o2> +)
+   (<o1> ^name move ^value <v1>)
+   (<o2> ^name move ^value > <v1>)
+-->
+   (<s> ^operator <o1> > <o2>)}
+
+# Send the motor command.
+sp {navigate*apply*move
+   (state <s> ^operator <o> ^io.output-link <ol>)
+   (<o> ^name move ^dir <d>)
+-->
+   (<ol> ^move <cmd>)
+   (<cmd> ^dir <d>)}
+
+# Remember which way the agent is now facing (used by tie-break).
+sp {navigate*apply*move*update-heading
+   (state <s> ^operator <o> ^heading <h>)
+   (<o> ^name move ^dir {<d> <> <h>})
+-->
+   (<s> ^heading <h> - <d> +)}
+
+# ---- output-link housekeeping ----------------------------------------
+
+# The environment marks an executed command with ^status complete;
+# remove it so the output-link does not grow.
+sp {navigate*apply*remove-completed-command
+   (state <s> ^operator <o> ^io.output-link <ol>)
+   (<ol> ^<attr> <cmd>)
+   (<cmd> ^status complete)
+-->
+   (<ol> ^<attr> <cmd> -)}

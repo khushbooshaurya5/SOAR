@@ -1,0 +1,156 @@
+# =====================================================================
+#  cost-model.soar -- the agent's human-centred model of "effort".
+#
+#  All rules here are ELABORATIONS (i-supported): they hold exactly as
+#  long as their conditions match. When the environment changes a crowd
+#  level on the input-link, or the agent records a new obstacle belief,
+#  Soar's truth maintenance retracts and re-derives the affected costs
+#  automatically -- no Python code recomputes anything.
+#
+#  The agent annotates every perceived cell <c> with its own
+#  interpretation, a "model" object (linked from the cell so that rules
+#  can look a cell's cost up directly instead of searching all models):
+#     (<c> ^model <k>)
+#     (<k> ^base-cost  N          ; physical effort of the terrain
+#          ^crowd-cost N          ; crowd level x profile crowd-weight
+#          ^access-penalty N      ; optional, profile-specific
+#          ^impassable <reason>   ; optional, cell must never be entered
+#          ^enter-cost N)         ; total; ABSENT when impassable
+# =====================================================================
+
+# ---- user profile ----------------------------------------------------
+
+# Copy the user's mobility profile from perception onto the state so the
+# other rules can test one short attribute.
+sp {cost*elaborate*profile
+   (state <s> ^name navigate ^io.input-link.user.profile <p>)
+-->
+   (<s> ^profile <p>)}
+
+# How strongly crowding matters to this user. A walking adult is slowed
+# a little by a crowd ...
+sp {cost*elaborate*crowd-weight*standard
+   (state <s> ^name navigate ^profile standard)
+-->
+   (<s> ^crowd-weight 1)}
+
+# ... a wheelchair user needs clear floor width to manoeuvre ...
+sp {cost*elaborate*crowd-weight*wheelchair
+   (state <s> ^name navigate ^profile wheelchair)
+-->
+   (<s> ^crowd-weight 2)}
+
+# ... and a low-vision user loses orientation cues in a dense crowd.
+sp {cost*elaborate*crowd-weight*low-vision
+   (state <s> ^name navigate ^profile low-vision)
+-->
+   (<s> ^crowd-weight 2)}
+
+# ---- one cell-model per perceived cell -------------------------------
+
+sp {cost*elaborate*cell-model
+   (state <s> ^name navigate ^io.input-link.map.cell <c>)
+-->
+   (<c> ^model <k>)}
+
+# ---- base (profile-independent) effort -------------------------------
+
+# Level surfaces and automatic doors cost one unit per cell.
+sp {cost*elaborate*base-cost*level
+   (state <s> ^name navigate ^io.input-link.map.cell <c>)
+   (<c> ^terrain << floor tactile open autodoor narrow >> ^model <k>)
+-->
+   (<k> ^base-cost 1)}
+
+# Manual doors, ramps and stairs take extra effort for everybody.
+sp {cost*elaborate*base-cost*effortful
+   (state <s> ^name navigate ^io.input-link.map.cell <c>)
+   (<c> ^terrain << door ramp stairs >> ^model <k>)
+-->
+   (<k> ^base-cost 2)}
+
+# ---- crowding --------------------------------------------------------
+
+# Crowd cost = perceived crowd level (0-3) x the user's crowd weight.
+# Re-fires automatically whenever the crowd level on the input-link changes.
+sp {cost*elaborate*crowd-cost
+   (state <s> ^name navigate ^crowd-weight <w> ^io.input-link.map.cell <c>)
+   (<c> ^crowd <level> ^model <k>)
+-->
+   (<k> ^crowd-cost (* <w> <level>))}
+
+# ---- accessibility knowledge: wheelchair -----------------------------
+
+# A wheelchair cannot use stairs: hard constraint, not a cost.
+sp {access*wheelchair*stairs-impassable
+   (state <s> ^name navigate ^profile wheelchair ^io.input-link.map.cell <c>)
+   (<c> ^terrain stairs ^model <k>)
+-->
+   (<k> ^impassable stairs)}
+
+# A wheelchair does not fit through the narrow service passage.
+sp {access*wheelchair*narrow-impassable
+   (state <s> ^name navigate ^profile wheelchair ^io.input-link.map.cell <c>)
+   (<c> ^terrain narrow ^model <k>)
+-->
+   (<k> ^impassable too-narrow)}
+
+# A heavy manual door is possible but awkward from a wheelchair:
+# prefer automatic doors when the detour is short.
+sp {access*wheelchair*manual-door-penalty
+   (state <s> ^name navigate ^profile wheelchair ^io.input-link.map.cell <c>)
+   (<c> ^terrain door ^model <k>)
+-->
+   (<k> ^access-penalty 3)}
+
+# ---- accessibility knowledge: low vision -----------------------------
+
+# Large open spaces (the atrium) offer no walls to follow.
+sp {access*low-vision*open-space-penalty
+   (state <s> ^name navigate ^profile low-vision ^io.input-link.map.cell <c>)
+   (<c> ^terrain open ^model <k>)
+-->
+   (<k> ^access-penalty 4)}
+
+# Stairs are a fall hazard.
+sp {access*low-vision*stairs-penalty
+   (state <s> ^name navigate ^profile low-vision ^io.input-link.map.cell <c>)
+   (<c> ^terrain stairs ^model <k>)
+-->
+   (<k> ^access-penalty 2)}
+
+# Plain floor has no tactile guidance strip; tactile paving (penalty-free)
+# therefore becomes the preferred surface.
+sp {access*low-vision*unguided-floor-penalty
+   (state <s> ^name navigate ^profile low-vision ^io.input-link.map.cell <c>)
+   (<c> ^terrain floor ^model <k>)
+-->
+   (<k> ^access-penalty 1)}
+
+# ---- obstacle beliefs ------------------------------------------------
+
+# A cell the agent REMEMBERS as blocked (see record-obstacle in
+# navigate.soar) is impassable for every profile.
+sp {obstacle*elaborate*remembered-obstacle-impassable
+   (state <s> ^name navigate ^memory.blocked <c>)
+   (<c> ^model <k>)
+-->
+   (<k> ^impassable obstacle)}
+
+# ---- total cost of entering a cell -----------------------------------
+
+# Two variants because Soar has no "default value": one for cells without
+# an accessibility penalty and one for cells with it. Neither fires for an
+# impassable cell, so such a cell has NO ^enter-cost and is invisible to
+# the planner and to move proposals.
+sp {cost*elaborate*enter-cost*no-penalty
+   (state <s> ^name navigate ^io.input-link.map.cell.model <k>)
+   (<k> ^base-cost <b> ^crowd-cost <cc> -^impassable -^access-penalty)
+-->
+   (<k> ^enter-cost (+ <b> <cc>))}
+
+sp {cost*elaborate*enter-cost*with-penalty
+   (state <s> ^name navigate ^io.input-link.map.cell.model <k>)
+   (<k> ^base-cost <b> ^crowd-cost <cc> ^access-penalty <p> -^impassable)
+-->
+   (<k> ^enter-cost (+ <b> <cc> <p>))}

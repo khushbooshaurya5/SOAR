@@ -1,0 +1,171 @@
+
+     0: ==>S: S1 
+     1:    O: O1 (init-navigate)
+     2:    O: O2 (plan-route)
+     3:    ==>S: S2 (operator no-change)
+     4:       O: O3 (init-plan)
+     5:       O: O6 (label)
+     6:       O: O7 (label)
+     7:       O: O5 (label)
+     8:       O: O4 (label)
+     9:       O: O18 (label)
+    10:       O: O16 (label)
+    11:       O: O11 (label)
+    12:       O: O10 (label)
+    13:       O: O15 (label)
+    14:       O: O12 (label)
+    15:       O: O17 (label)
+    16:       O: O25 (label)
+    17:       O: O32 (label)
+    18:       O: O29 (label)
+    19:       O: O33 (label)
+    20:       O: O27 (label)
+    21:       O: O30 (label)
+    22:       O: O28 (label)
+    23:       O: O31 (label)
+    24:       O: O26 (label)
+    25:       O: O39 (label)
+    26:       O: O40 (label)
+    27:       O: O49 (label)
+    28:       O: O42 (label)
+    29:       O: O45 (label)
+    30:       O: O37 (label)
+    31:       O: O41 (label)
+    32:       O: O50 (label)
+    33:       O: O43 (label)
+    34:       O: O60 (label)
+    35:       O: O65 (label)
+    36:       O: O64 (label)
+    37:       O: O62 (label)
+    38:       O: O63 (label)
+    39:       O: O61 (label)
+    40:       O: O54 (label)
+    41:       O: O58 (label)
+    42:       O: O48 (label)
+    43:       O: O67 (label)
+    44:       O: O57 (label)
+    45:       O: O79 (label)
+    46:       O: O71 (label)
+    47:       O: O77 (label)
+    48:       O: O80 (label)
+    49:       O: O74 (label)
+    50:       O: O73 (label)
+    51:       O: O72 (label)
+    52:       O: O70 (label)
+    53:       O: O84 (label)
+    54:       O: O83 (label)
+    55:       O: O94 (label)
+    56:       O: O90 (label)
+    57:       O: O96 (label)
+    58:       O: O93 (label)
+    59:       O: O86 (label)
+    60:       O: O103 (label)
+    61:       O: O97 (label)
+    62:       O: O101 (label)
+    63:       O: O88 (label)
+    64:       O: O99 (label)
+    65:       O: O106 (label)
+    66:       O: O91 (label)
+    67:       O: O105 (label)
+    68:       O: O127 (label)
+    69:       O: O120 (label)
+    70:       O: O117 (label)
+    71:       O: O116 (label)
+    72:       O: O108 (label)
+    73:       O: O92 (label)
+    74:       O: O113 (label)
+    75:       O: O125 (label)
+    76:       O: O111 (label)
+    77:       O: O114 (label)
+    78:       O: O112 (label)
+    79:       O: O118 (label)
+    80:       O: O123 (label)
+    81:       O: O126 (label)
+    82:       O: O139 (label)
+    83:       O: O131 (label)
+    84:       O: O136 (label)
+    85:       O: O133 (label)
+    86:       O: O137 (label)
+    87:       O: O140 (label)
+    88:       O: O165 (complete-plan)
+    89:    O: O166 (move)
+    90:    O: O168 (move)
+    91:    O: O171 (move)
+    92:    ==>S: S3 (operator tie)
+    93:       O: O176 (prefer)
+    94:    O: O174 (move)
+    95:    O: O180 (move)
+    96:    O: O183 (move)
+    97:    O: O186 (move)
+    98:    O: O191 (move)
+    99:    O: O196 (finish)
+
+--- working memory: top state (print --depth 2 S1) ---
+(S1 ^at-goal true ^crowd-weight 1 ^epmem E1 ^heading east ^io I1 ^memory M2
+       ^name navigate ^operator O196 ^operator O196 + ^plan P2
+       ^profile standard ^reward-link R1 ^smem L1 ^superstate nil ^type state)
+  (E1 ^command C1 ^present-id 1 ^result R2)
+  (I1 ^input-link I2 ^output-link I3)
+  (O196 ^name finish ^priority 6)
+  (P2 ^epoch 0 ^label L86 ^label L85 ^label L84 ^label L83 ^label L82
+         ^label L81 ^label L80 ^label L79 ^label L78 ^label L77 ^label L76
+         ^label L75 ^label L74 ^label L73 ^label L72 ^label L71 ^label L70
+         ^label L69 ^label L68 ^label L67 ^label L66 ^label L65 ^label L64
+         ^label L63 ^label L62 ^label L61 ^label L60 ^label L59 ^label L58
+         ^label L57 ^label L56 ^label L55 ^label L54 ^label L53 ^label L52
+         ^label L51 ^label L50 ^label L49 ^label L48 ^label L47 ^label L46
+         ^label L45 ^label L44 ^label L43 ^label L42 ^label L41 ^label L40
+         ^label L39 ^label L38 ^label L37 ^label L36 ^label L35 ^label L34
+         ^label L33 ^label L32 ^label L31 ^label L30 ^label L29 ^label L28
+         ^label L27 ^label L26 ^label L25 ^label L24 ^label L23 ^label L22
+         ^label L21 ^label L20 ^label L19 ^label L18 ^label L17 ^label L16
+         ^label L15 ^label L14 ^label L13 ^label L12 ^label L11 ^label L10
+         ^label L9 ^label L8 ^label L7 ^label L6 ^label L5 ^label L4 ^label L3
+         ^status complete)
+  (L1 ^command C2 ^result R3)
+
+--- chunks learned (print --chunks --full) ---
+sp {chunk*tie-break*apply*prefer*t2-93-1
+    :chunk
+    (state <s1> ^name navigate ^operator <o1> + ^heading <d1>
+          ^operator { <o2> <> <o1> } +)
+    (<o1> ^name move ^dir <d1> ^value <v1> ^to <t2>)
+    (<o2> ^name move ^value <v1> ^to <t1> ^dir { <d2> <> <d1> })
+    (<t1> ^crowd <c1>)
+    (<t2> ^crowd <c1>)
+    -->
+    (<s1> ^operator <o1> > <o2>)
+}
+
+
+--- stats ---
+Soar 9.6.50 on vm at Wed Nov 11 23:14:43 2026
+
+53 productions (0 default, 52 user, 1 chunks)
+   + 85 justifications
+                                                        |   Computed
+Phases:      Input   Propose   Decide   Apply    Output |     Totals
+========================================================|===========
+Kernel:      0.004    0.005    0.002    0.053    0.000  |      0.064
+========================================================|===========
+Input fn:    0.004                                      |      0.004
+========================================================|===========
+Outpt fn:                                        0.000  |      0.000
+========================================================|===========
+Callbcks:    0.000    0.000    0.000    0.000    0.000  |      0.000
+========================================================|===========
+Computed------------------------------------------------+-----------
+Totals:      0.008    0.005    0.002    0.053    0.000  |      0.068
+
+Values from single timers:
+ Kernel CPU Time:       0.064 sec. 
+ Total  CPU Time:       0.068 sec.
+
+99 decisions (0.643 msec/decision)
+385 elaboration cycles (3.889 ec's per dc, 0.165 msec/ec)
+470 inner elaboration cycles
+96 p-elaboration cycles (0.970 pe's per dc, 0.663 msec/pe)
+2836 production firings (7.366 pf's per ec, 0.022 msec/pf)
+7471 wme changes (6303 additions, 1168 removals)
+WM size: 5135 current, 5068.572 mean, 5293 maximum
+

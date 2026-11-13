@@ -1,0 +1,17 @@
+{
+  "name": "crowded",
+  "title": "Scenario 2 - Crowded corridors",
+  "description": "Crowds change twice while the agent is walking and a cleaning cart (unknown to the agent) blocks a cell on the detour.",
+  "map": "maps/campus_floor.txt",
+  "profile": "standard",
+  "start": [2, 2],
+  "goal": [17, 14],
+  "crowd_phases": [
+    {"from_step": 0,  "zones": [{"x0": 4, "y0": 6, "x1": 12, "y1": 6, "level": 2}]},
+    {"from_step": 8,  "zones": [{"x0": 9, "y0": 5, "x1": 16, "y1": 6, "level": 3},
+                                {"x0": 12, "y0": 7, "x1": 13, "y1": 8, "level": 3}]},
+    {"from_step": 24, "zones": [{"x0": 6, "y0": 11, "x1": 12, "y1": 11, "level": 2}]}
+  ],
+  "obstacles": [[4, 11]],
+  "max_steps": 200
+}

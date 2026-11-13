@@ -1,0 +1,72 @@
+# =====================================================================
+#  tie-break.soar -- substate for an OPERATOR TIE impasse between move
+#  operators whose routes cost exactly the same.
+#
+#  Cost alone cannot decide, so the agent deliberates with human-centred
+#  secondary criteria, in this order:
+#     1. less-crowded   step into the less crowded cell
+#     2. keep-heading   go straight on (fewer turns = easier to follow)
+#     3. no-difference  genuinely equivalent -> indifferent
+#
+#  Each criterion is an operator `prefer` in the substate; applying it
+#  returns a preference to the superstate. That returned preference is a
+#  RESULT, so Soar's chunking compiles the reasoning into a new selection
+#  rule ("chunk"). Next time the same kind of tie is settled directly by
+#  the chunk and no impasse arises.
+#
+#  Every proposal tests that both items have the SAME ^value. That keeps
+#  the learned chunks correct: they can never override the cost-based
+#  rule navigate*compare*move*cheaper-route.
+# =====================================================================
+
+# Fires exactly once per tie impasse of the navigate problem space (the
+# only operators that can tie there are moves), which also makes this
+# rule's firing count a direct count of tie impasses.
+sp {tie-break*elaborate*substate
+   (state <s> ^impasse tie ^attribute operator ^superstate.name navigate)
+-->
+   (<s> ^name tie-break)}
+
+# 1. The two destination cells differ in crowd level.
+sp {tie-break*propose*prefer*less-crowded
+   (state <s> ^name tie-break ^item <a> ^item {<b> <> <a>})
+   (<a> ^name move ^value <v> ^to.crowd <ca>)
+   (<b> ^name move ^value <v> ^to.crowd > <ca>)
+-->
+   (<s> ^operator <o> + =)
+   (<o> ^name prefer ^criterion less-crowded ^winner <a> ^loser <b>)}
+
+# 2. Same crowd level, but only <a> continues in the current heading.
+sp {tie-break*propose*prefer*keep-heading
+   (state <s> ^name tie-break ^item <a> ^item {<b> <> <a>} ^superstate <ss>)
+   (<ss> ^heading <h>)
+   (<a> ^name move ^value <v> ^to.crowd <c> ^dir <h>)
+   (<b> ^name move ^value <v> ^to.crowd <c> ^dir <> <h>)
+-->
+   (<s> ^operator <o> + =)
+   (<o> ^name prefer ^criterion keep-heading ^winner <a> ^loser <b>)}
+
+# 3. Same crowd level and neither continues the heading: no reason to
+#    prefer either one.
+sp {tie-break*propose*no-difference
+   (state <s> ^name tie-break ^item <a> ^item {<b> <> <a>} ^superstate <ss>)
+   (<ss> ^heading <h>)
+   (<a> ^name move ^value <v> ^to.crowd <c> ^dir <> <h>)
+   (<b> ^name move ^value <v> ^to.crowd <c> ^dir <> <h>)
+-->
+   (<s> ^operator <o> + =)
+   (<o> ^name no-difference ^first <a> ^second <b>)}
+
+# Return the verdict to the superstate as a "better" preference ...
+sp {tie-break*apply*prefer
+   (state <s> ^operator <o> ^superstate <ss>)
+   (<o> ^name prefer ^winner <a> ^loser <b>)
+-->
+   (<ss> ^operator <a> > <b>)}
+
+# ... or as a binary indifferent preference (Soar then picks at random).
+sp {tie-break*apply*no-difference
+   (state <s> ^operator <o> ^superstate <ss>)
+   (<o> ^name no-difference ^first <a> ^second <b>)
+-->
+   (<ss> ^operator <a> = <b>)}

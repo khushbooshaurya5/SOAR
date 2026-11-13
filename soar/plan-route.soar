@@ -1,0 +1,121 @@
+# =====================================================================
+#  plan-route.soar -- substate that implements the abstract operator
+#  plan-route (operator no-change impasse = hierarchical decomposition).
+#
+#  It labels cells with their cheapest cost-to-goal, working BACKWARDS
+#  from the goal (uniform-cost search). The "priority queue" is Soar's
+#  own decision procedure: every frontier cell is a proposed `label`
+#  operator and better-preferences make the cheapest one win.
+#
+#  Results are written straight onto the superstate:
+#     (<ss> ^plan <p>)
+#     (<p> ^status building|complete|unreachable ^epoch N ^label <l> ...)
+#     (<l> ^cell <c> ^dist N ^via <next-cell-towards-goal>)
+#
+#  WHY CHUNKING IS SWITCHED OFF HERE (dont-learn):
+#  a chunk is built by backtracing through the rules that CREATED a
+#  result. Which label operator was *selected* depended on better
+#  preferences, and Soar does not backtrace through those. A chunk
+#  learned here would say "label any frontier cell from any labelled
+#  neighbour" -- without the "it was the cheapest" condition -- and
+#  would produce wrong (non-minimal) distances. Learning is therefore
+#  disabled for this substate and enabled where it is sound (tie-break).
+# =====================================================================
+
+sp {plan-route*elaborate*substate
+   (state <s> ^impasse no-change ^attribute operator ^superstate <ss>)
+   (<ss> ^operator.name plan-route)
+-->
+   (<s> ^name plan-route)
+   (dont-learn <s>)}
+
+# ---- init-plan --------------------------------------------------------
+
+# No plan object yet: create one, stamped with the crowd epoch it is
+# valid for, and seed the search with the goal at distance 0.
+sp {plan-route*propose*init-plan
+   (state <s> ^name plan-route ^superstate <ss>)
+   (<ss> -^plan)
+-->
+   (<s> ^operator <o> +)
+   (<o> ^name init-plan)}
+
+sp {plan-route*apply*init-plan
+   (state <s> ^operator.name init-plan ^superstate <ss>)
+   (<ss> ^io.input-link <il>)
+   (<il> ^goal.cell <g> ^crowd-epoch <e>)
+-->
+   (<ss> ^plan <p>)
+   (<p> ^status building ^epoch <e> ^label <l>)
+   (<l> ^cell <g> ^dist 0)}
+
+# ---- label ------------------------------------------------------------
+
+# Frontier expansion. For an unlabelled, enterable cell <c> next to a
+# labelled cell <n>: going <c> -> <n> -> goal costs dist(n) + enter(n).
+# All label operators are mutually indifferent (=) unless a better
+# preference (next rule) says otherwise.
+sp {plan-route*propose*label
+   (state <s> ^name plan-route ^superstate <ss>)
+   (<ss> ^plan <p>)
+   (<p> ^status building ^label <ln>)
+   (<ln> ^cell <n> ^dist <dn>)
+   (<n> ^model.enter-cost <en> ^neighbor.cell <c>)
+   (<c> ^model.enter-cost <ec>)
+  -{(<p> ^label <lc>)
+    (<lc> ^cell <c>)}
+-->
+   (<s> ^operator <o> + =)
+   (<o> ^name label ^cell <c> ^via <n> ^dist (+ <dn> <en>))}
+
+# Cheapest-first: this is what makes the search uniform-cost (Dijkstra).
+sp {plan-route*compare*label*cheapest-first
+   (state <s> ^name plan-route ^operator <o1> + ^operator <o2> +)
+   (<o1> ^name label ^dist <d1>)
+   (<o2> ^name label ^dist > <d1>)
+-->
+   (<s> ^operator <o1> > <o2>)}
+
+# Make the selected label permanent (a result on the superstate).
+sp {plan-route*apply*label
+   (state <s> ^operator <o> ^superstate.plan <p>)
+   (<o> ^name label ^cell <c> ^via <n> ^dist <d>)
+-->
+   (<p> ^label <l>)
+   (<l> ^cell <c> ^dist <d> ^via <n>)}
+
+# ---- complete-plan ----------------------------------------------------
+
+# As soon as the agent's own cell is labelled the search can stop:
+# every cell on a cheapest route is cheaper and so already labelled.
+sp {plan-route*propose*complete-plan
+   (state <s> ^name plan-route ^superstate <ss>)
+   (<ss> ^plan <p> ^io.input-link.agent.cell <here>)
+   (<p> ^status building ^label.cell <here>)
+-->
+   (<s> ^operator <o> + >)
+   (<o> ^name complete-plan)}
+
+# Marking the plan complete retracts the plan-route proposal in the
+# superstate, which resolves the impasse and removes this substate.
+sp {plan-route*apply*complete-plan
+   (state <s> ^operator.name complete-plan ^superstate.plan <p>)
+   (<p> ^status building)
+-->
+   (<p> ^status building - complete +)}
+
+# ---- fail-plan --------------------------------------------------------
+
+# Worst preference (<): only selected when the frontier is empty and
+# the agent's cell was never reached, i.e. the goal is unreachable.
+sp {plan-route*propose*fail-plan
+   (state <s> ^name plan-route ^superstate.plan.status building)
+-->
+   (<s> ^operator <o> + <)
+   (<o> ^name fail-plan)}
+
+sp {plan-route*apply*fail-plan
+   (state <s> ^operator.name fail-plan ^superstate.plan <p>)
+   (<p> ^status building)
+-->
+   (<p> ^status building - unreachable +)}
